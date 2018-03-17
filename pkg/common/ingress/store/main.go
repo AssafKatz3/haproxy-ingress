@@ -28,7 +28,7 @@ type IngressLister struct {
 	cache.Store
 }
 
-// SecretsLister makes a Store that lists Secrets.
+// SecretLister makes a Store that lists Secrets.
 type SecretLister struct {
 	cache.Store
 }
@@ -99,4 +99,21 @@ func (s *EndpointLister) GetServiceEndpoints(svc *apiv1.Service) (ep apiv1.Endpo
 	}
 	err = fmt.Errorf("could not find endpoints for service: %v", svc.Name)
 	return
+}
+
+// PodLister makes a store that lists Pods.
+type PodLister struct {
+	cache.Store
+}
+
+// GetPod returns the pod given it's namespace and name.
+func (s *PodLister) GetPod(namespace, name string) (*apiv1.Pod, error) {
+	for _, m := range s.Store.List() {
+		pod := *m.(*apiv1.Pod)
+		if pod.Name == name && pod.Namespace == namespace {
+			return &pod, nil
+		}
+	}
+	err := fmt.Errorf("could not find pod %v/%v", namespace, name)
+	return nil, err
 }
