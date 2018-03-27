@@ -19,9 +19,9 @@ package controller
 import (
 	"fmt"
 	"github.com/golang/glog"
+	"github.com/jcmoraisjr/haproxy-ingress/pkg/common/ingress"
 	"github.com/jcmoraisjr/haproxy-ingress/pkg/types"
 	"github.com/jcmoraisjr/haproxy-ingress/pkg/utils"
-	"github.com/jcmoraisjr/haproxy-ingress/pkg/common/ingress"
 	"reflect"
 	"sort"
 )
@@ -120,7 +120,7 @@ func reconfigureBackends(currentConfig, updatedConfig *types.ControllerConfig) b
 				for _, backendName := range curKeys {
 					updLen := len(updBackendsMap[backendName].Endpoints)
 					totalSlots := len(curBackendSlots[backendName].EmptySlots) + len(curBackendSlots[backendName].FullSlots)
-					if updLen > totalSlots || updLen < (totalSlots-updatedConfig.Cfg.BackendServerSlotsIncrement) {
+					if updLen > totalSlots {
 						// need to resize number of empty slots by BackendServerSlotsIncrement amount
 						reconfigureEmptySlots = true
 					} else {
